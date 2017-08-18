@@ -1,2 +1,9 @@
 package: .
-import: []
+import:
+- package: github.com/c-bata/go-prompt
+  version: v0.1.0
+- package: golang.org/x/sys
+  repo: https://github.com/golang/sys.git
+- package: github.com/logrusorgru/aurora
+- package: github.com/jordan-wright/email
+  version: v2.2
