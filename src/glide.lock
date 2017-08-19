@@ -1,10 +1,8 @@
-hash: f390429a15e466bfd2293ec5c7952a151b932422c342da43ec2d2ea8bad14426
-updated: 2017-08-18T17:46:20.873721145+08:00
+hash: 2cc2f68b6209fe0293020b32317c5966376a60023a12418f3c3e76b8c81dfb00
+updated: 2017-08-18T20:58:43.281792834+08:00
 imports:
 - name: github.com/c-bata/go-prompt
   version: b5d7d9eae33759a6646cb41768966b593eef18f3
-- name: github.com/jordan-wright/email
-  version: a62870b0c368c3c29de27027be67d855e308cc37
 - name: github.com/logrusorgru/aurora
   version: 962a6974312dde57d1f6f5738b4f83e1af9f38a4
 - name: github.com/pkg/term
@@ -16,4 +14,6 @@ imports:
   repo: https://github.com/golang/sys.git
   subpackages:
   - unix
+- name: gopkg.in/gomail.v2
+  version: 41f3572897373c5538c50a2402db15db079fa4fd
 testImports: []

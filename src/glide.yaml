@@ -5,5 +5,5 @@ import:
 - package: golang.org/x/sys
   repo: https://github.com/golang/sys.git
 - package: github.com/logrusorgru/aurora
-- package: github.com/jordan-wright/email
-  version: v2.2
+- package: gopkg.in/gomail.v2
+  version: 2.0.0

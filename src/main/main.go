@@ -7,6 +7,7 @@ import (
     "strings"
     "os"
     "mail"
+    "conf"
 )
 
 const (
@@ -23,6 +24,7 @@ const (
 
 func completer(d prompt.Document) []prompt.Suggest {
     s := []prompt.Suggest{
+        {Text: "load", Description: "load /usr/local/mailconf.json"},
         {Text: "from", Description: "from xx"},
         {Text: "to", Description: "to xx xx"},
         {Text: "cc", Description: "cc xx xx"},
@@ -40,8 +42,9 @@ func main() {
 
     fmt.Println(aurora.Blue(Logo))
 
+    cmd:
     for {
-        t := prompt.Input("[GoMail] >>> ", completer, prompt.OptionPrefixTextColor(prompt.Brown), prompt.OptionMaxSuggestion(8))
+        t := prompt.Input("[GoMail] >>> ", completer, prompt.OptionPrefixTextColor(prompt.Brown), prompt.OptionMaxSuggestion(9))
 
         if "" != t {
 
@@ -53,16 +56,21 @@ func main() {
 
                 args_length := len(args)
                 switch verb {
-                case "from":
+                case "from", "load":
                     if 1 != args_length {
                         fmt.Println(aurora.Red("[GoMail] command must have only one argument"))
-                        break
+                        goto cmd
                     }
-                    mailInfo[verb] = args[0]
+                    if "load" == verb {
+                        conf.LoadConf(args[0])
+                        goto cmd
+                    } else {
+                        mailInfo[verb] = args[0]
+                    }
                 case "to", "cc", "subject", "text", "attach":
                     if 0 == args_length {
                         fmt.Println(aurora.Red("[GoMail] command must at least have one argument"))
-                        break
+                        goto cmd
                     }
                     mailInfo[verb] = strings.Join(args, " ")
                 case "quit":
@@ -73,7 +81,12 @@ func main() {
                 }
 
             }
+            if conf.MailConfInstance == nil {
+                fmt.Println(aurora.Red("[GoMail] not yet load conf success"))
+                continue
+            }
             mail.SendTextMail(mailInfo)
+
         } else {
             fmt.Println(aurora.Red("[GoMail] input is none"))
         }

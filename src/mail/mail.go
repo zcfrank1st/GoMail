@@ -1,45 +1,46 @@
 package mail
 
 import (
-    "github.com/jordan-wright/email"
     "strings"
-    "net/smtp"
     "fmt"
     "github.com/logrusorgru/aurora"
+    "gopkg.in/gomail.v2"
+    "crypto/tls"
+    "conf"
+    "strconv"
 )
-
-const (
-    SmtpAddress = ""
-    AuthUsername = ""
-    AuthPassword = ""
-    AuthHost = ""
-)
-
 
 func SendTextMail(mailInfo map[string]string) {
-    e := email.NewEmail()
+    m := gomail.NewMessage()
 
     if from, ok := mailInfo["from"]; ok {
-       e.From = from
+        m.SetHeader("From", from)
     }
     if to, ok := mailInfo["to"]; ok {
-        e.To = strings.Fields(to)
+        m.SetHeader("To", strings.Fields(to)...)
     }
     if cc, ok := mailInfo["cc"]; ok {
-        e.Cc = strings.Fields(cc)
+        for _, ele := range strings.Fields(cc) {
+            m.SetAddressHeader("Cc", ele, "")
+        }
     }
     if subject, ok := mailInfo["subject"]; ok {
-        e.Subject = subject
+        m.SetHeader("Subject", subject)
     }
     if text, ok := mailInfo["text"]; ok {
-        e.Text = []byte(text)
+        m.SetBody("text/plain", text)
     }
     if attach, ok := mailInfo["attachment"]; ok {
-        e.AttachFile(attach)
+        m.Attach(attach)
     }
 
     fmt.Println(aurora.Blue("[GoMail] mail sending ..."))
-    if err := e.Send(SmtpAddress, smtp.PlainAuth("", AuthUsername, AuthPassword, AuthHost)); err != nil {
+
+    port, _ := strconv.Atoi(conf.MailConfInstance.Port)
+    d := gomail.NewPlainDialer(conf.MailConfInstance.Host, port, conf.MailConfInstance.AuthUsername, conf.MailConfInstance.AuthPassword)
+    d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+    if err := d.DialAndSend(m); err != nil {
         fmt.Println(aurora.Red("[GoMail] send mail failed: "), err)
     } else {
         fmt.Println(aurora.Green("[GoMail] send mail success"))
