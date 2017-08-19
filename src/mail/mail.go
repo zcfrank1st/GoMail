@@ -30,7 +30,7 @@ func SendTextMail(mailInfo map[string]string) {
     if text, ok := mailInfo["text"]; ok {
         m.SetBody("text/plain", text)
     }
-    if attach, ok := mailInfo["attachment"]; ok {
+    if attach, ok := mailInfo["attach"]; ok {
         m.Attach(attach)
     }
 
